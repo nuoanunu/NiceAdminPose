@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="NicePoseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="nchar" MaxLength="10" Nullable="false" />
+    <Property Name="linkLogo" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="NiceposeUser">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="nvarchar" MaxLength="128" />
+    <Property Name="email" Type="nvarchar" MaxLength="128" />
+    <Property Name="createDate" Type="date" Nullable="false" />
+    <Property Name="isActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TemplatePicture">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="link" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="createdDate" Type="date" Nullable="false" />
+    <Property Name="usage" Type="int" Nullable="false" />
+    <Property Name="cateID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="UserPictures">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="userID" Type="int" Nullable="false" />
+    <Property Name="url" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Point" Type="float" Nullable="false" />
+    <Property Name="TotalRated" Type="int" Nullable="false" />
+    <Property Name="uploadedDate" Type="date" Nullable="false" />
+    <Property Name="templateLink" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="isActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_TemplatePicture_Category">
+    <End Role="Category" Type="Self.Category" Multiplicity="1" />
+    <End Role="TemplatePicture" Type="Self.TemplatePicture" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="TemplatePicture">
+        <PropertyRef Name="cateID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserPictures_NiceposeUser">
+    <End Role="NiceposeUser" Type="Self.NiceposeUser" Multiplicity="1" />
+    <End Role="UserPictures" Type="Self.UserPictures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="NiceposeUser">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="UserPictures">
+        <PropertyRef Name="userID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="NicePoseModelStoreContainer">
+    <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="NiceposeUser" EntityType="Self.NiceposeUser" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TemplatePicture" EntityType="Self.TemplatePicture" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="UserPictures" EntityType="Self.UserPictures" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_TemplatePicture_Category" Association="Self.FK_TemplatePicture_Category">
+      <End Role="Category" EntitySet="Category" />
+      <End Role="TemplatePicture" EntitySet="TemplatePicture" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserPictures_NiceposeUser" Association="Self.FK_UserPictures_NiceposeUser">
+      <End Role="NiceposeUser" EntitySet="NiceposeUser" />
+      <End Role="UserPictures" EntitySet="UserPictures" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

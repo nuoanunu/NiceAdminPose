@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="NicePoseModelStoreContainer" CdmEntityContainer="NicePoseEntities">
+    <EntitySetMapping Name="Categories">
+      <EntityTypeMapping TypeName="NicePoseModel.Category">
+        <MappingFragment StoreEntitySet="Category">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="linkLogo" ColumnName="linkLogo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NiceposeUsers">
+      <EntityTypeMapping TypeName="NicePoseModel.NiceposeUser">
+        <MappingFragment StoreEntitySet="NiceposeUser">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="createDate" ColumnName="createDate" />
+          <ScalarProperty Name="isActive" ColumnName="isActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TemplatePictures">
+      <EntityTypeMapping TypeName="NicePoseModel.TemplatePicture">
+        <MappingFragment StoreEntitySet="TemplatePicture">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="link" ColumnName="link" />
+          <ScalarProperty Name="createdDate" ColumnName="createdDate" />
+          <ScalarProperty Name="usage" ColumnName="usage" />
+          <ScalarProperty Name="cateID" ColumnName="cateID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserPictures">
+      <EntityTypeMapping TypeName="NicePoseModel.UserPicture">
+        <MappingFragment StoreEntitySet="UserPictures">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="userID" ColumnName="userID" />
+          <ScalarProperty Name="url" ColumnName="url" />
+          <ScalarProperty Name="Point" ColumnName="Point" />
+          <ScalarProperty Name="TotalRated" ColumnName="TotalRated" />
+          <ScalarProperty Name="uploadedDate" ColumnName="uploadedDate" />
+          <ScalarProperty Name="templateLink" ColumnName="templateLink" />
+          <ScalarProperty Name="isActive" ColumnName="isActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
