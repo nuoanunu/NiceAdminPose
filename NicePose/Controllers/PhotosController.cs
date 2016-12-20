@@ -15,13 +15,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-
+using NicePose.Models;
 using System.Xml;
 using System.Xml.Linq;
-
+using System.Linq;
 namespace NicePose.Controllers
 {
-    public class PhotosController : Controller
+    public class PhotosController : iController
     {
         String IMGUR_ANONYMOUS_API_KEY = "f615f2976080959";
         private object file;
@@ -89,6 +89,7 @@ namespace NicePose.Controllers
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine("I was called ?? ");
                 string contentType = "image/jpeg"; ;
                 CookieContainer cookie = new CookieContainer();
                 NameValueCollection par = new NameValueCollection();
@@ -103,6 +104,56 @@ namespace NicePose.Controllers
                 string resp;
                 par["optsize"] = "resample";
                 resp = UploadFileEx(@"C:\Users\NhatVHN\Desktop\model.jpg", "http://www.imageshack.us/upload_api.php", "fileupload", contentType, par, cookie);
+
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        public string UploadFromAndroid(string fileName,String userEmail,String userName,String Templat)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("I was called ?? ");
+                string contentType = "image/jpeg"; ;
+                CookieContainer cookie = new CookieContainer();
+                NameValueCollection par = new NameValueCollection();
+                par["MAX_FILE_SIZE"] = "3145728";
+                par["refer"] = "";
+                par["brand"] = "";
+                par["key"] = "01567DQW77d6d472ef877a4bf1d5b3ff8caebaa1";
+                par["optimage"] = "1";
+                par["rembar"] = "1";
+                par["submit"] = "host it!";
+                List<String> l = new List<String>();
+                string resp;
+                par["optsize"] = "resample";
+                resp = UploadFileEx(@"C:\Users\NhatVHN\Desktop\model.jpg", "http://www.imageshack.us/upload_api.php", "fileupload", contentType, par, cookie);
+                NiceposeUser user;
+                user = dbContext.NiceposeUsers.Where(u => u.email.Equals(userEmail)).FirstOrDefault();
+                if (user == null) {
+                    user = new NiceposeUser();
+                    user.createDate = DateTime.Today;
+                    user.email = userEmail;
+                    user.name = userName;
+                    user.isActive = true;
+                    dbContext.NiceposeUsers.Add(user);
+                    dbContext.SaveChanges();
+                }
+                if (resp != null && resp.Length > 5) {
+                    UserPicture ip = new UserPicture();
+                    ip.isActive = true;
+                    ip.Point = 0;
+                    ip.TotalRated = 0;
+                    ip.templateLink = Templat;
+                    ip.userID = user.id;
+                    ip.uploadedDate = DateTime.Today;
+                    ip.url = resp;
+                    dbContext.UserPictures.Add(ip);
+                    dbContext.SaveChanges();
+                }
                 return resp;
             }
             catch (Exception ex)
@@ -199,6 +250,7 @@ namespace NicePose.Controllers
       
             fileStream.Close();
             s.Close();
+            
             return imgLink[0].InnerText;
 
 

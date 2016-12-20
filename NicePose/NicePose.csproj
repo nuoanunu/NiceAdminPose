@@ -233,6 +233,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\iController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PhotosController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -886,6 +887,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\i\" />
     <Folder Include="Views\Photos\" />
   </ItemGroup>
   <ItemGroup>
