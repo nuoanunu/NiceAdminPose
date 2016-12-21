@@ -20,6 +20,8 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Web.Script.Serialization;
 using System.Linq;
+using NicePose.Models.SupportModel;
+
 namespace NicePose.Controllers
 {
     public class mPhotos {
@@ -27,6 +29,7 @@ namespace NicePose.Controllers
         public String photoName { get; set; }
         public int usage { get; set; }
     }
+ 
     public class PhotosController : iController
     {
 
@@ -66,7 +69,7 @@ namespace NicePose.Controllers
             return View("CateDetail");
         }
 
-        public ActionResult UploadTemplate(int cateID, HttpPostedFileBase newpic, String name) {
+        public ActionResult UploadTemplate(int cateID, HttpPostedFileBase newpic) {
            
                 System.Diagnostics.Debug.WriteLine("I was called ?? ");
                 string contentType = "image/jpeg"; ;
@@ -86,7 +89,7 @@ namespace NicePose.Controllers
                 if (resp != null) {
                     TemplatePicture pic = new TemplatePicture();
                     pic.link = resp;
-                    pic.name = name;
+                    pic.name = newpic.FileName;
                     pic.usage = 0;
                     pic.createdDate = DateTime.Now;
                     pic.cateID = cateID;
@@ -96,6 +99,41 @@ namespace NicePose.Controllers
 
             
           
+            return RedirectToAction("CateDetail", new { id = cateID });
+        }
+        public ActionResult UploadManyTemplate(int cateID, IEnumerable<HttpPostedFileBase> files)
+        {
+            foreach (HttpPostedFileBase newpic in files) {
+               string contentType = "image/jpeg"; ;
+                CookieContainer cookie = new CookieContainer();
+                NameValueCollection par = new NameValueCollection();
+                par["MAX_FILE_SIZE"] = "3145728";
+                par["refer"] = "";
+                par["brand"] = "";
+                par["key"] = "01567DQW77d6d472ef877a4bf1d5b3ff8caebaa1";
+                par["optimage"] = "1";
+                par["rembar"] = "1";
+                par["submit"] = "host it!";
+                List<String> l = new List<String>();
+                string resp;
+                par["optsize"] = "resample";
+                resp = mUploadPicture(newpic, "http://www.imageshack.us/upload_api.php", "fileupload", contentType, par, cookie);
+                if (resp != null)
+                {
+                    TemplatePicture pic = new TemplatePicture();
+                    pic.link = resp;
+                    pic.name = newpic.FileName;
+                    pic.usage = 0;
+                    pic.createdDate = DateTime.Now;
+                    pic.cateID = cateID;
+                    dbContext.TemplatePictures.Add(pic);
+                    dbContext.SaveChanges();
+                }
+            }
+            
+
+
+
             return RedirectToAction("CateDetail", new { id = cateID });
         }
         public static void PostToImgur(string imagFilePath, string apiKey)

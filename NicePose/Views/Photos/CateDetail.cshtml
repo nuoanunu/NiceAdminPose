@@ -57,14 +57,14 @@
                                                         <p>Uploaded this picture:</p>
                                                         <div class="attach">
                                                             <a href="#" class="thumbnail">
-                                                                <img src="@pic.link" class="img-responsive">
+                                                                <img width="300px" src="@pic.link" class="img-responsive">
                                                             </a>
-                                                     
+
                                                         </div>
                                                     </div>
                                                     <div class="media-action">
                                                         <button class="btn btn-link"><i class="fa fa-thumbs-o-up"></i>@pic.usage</button>
-                                                   
+
                                                     </div>
                                                     @*<div class="media-comment">
                                                             <input type="text" class="form-control" placeholder="comment...">
@@ -73,18 +73,40 @@
                                                 </div>
                                             </div>
                                         }
-                                        <form action="/Photos/UploadTemplate" method="post" enctype="multipart/form-data">
-                                            <input type="hidden" name="cateID" value="@thisuser.id"/>
-                                            <input type="file" name="newpic"/>
-                                            <input type="text" name="name"/>
-                                            <button type="submit">Lên</button>
-                                        </form>
-                                        <form action="/Photos/UploadTemplateMany" method="post" enctype="multipart/form-data">
-                                            <input type="hidden" name="cateID" value="@thisuser.id" />
-                                            <input type="file" name="newpic" />
-                                            <input type="text" name="name" />
-                                            <button type="submit">Lên nhiều</button>
-                                        </form>
+                                        <div class="card">
+                                            <div class="card-header">
+                                                Upload new template
+                                            </div>
+                                            <div class="card-body">
+                                                <form class="form form-horizontal ng-pristine ng-valid" action="/Photos/UploadManyTemplate" method="post" enctype="multipart/form-data">
+                                                    <input type="hidden" name="cateID" value="@thisuser.id" />
+                                                
+
+                                                    <div class="section">
+                                                        <div class="section-title">Choose Files</div>
+                                                        <div class="section-body">
+                                                            <div class="form-group">
+                                                                <label class="col-md-3 control-label">Type</label>
+                                                                <div class="col-md-9">
+                                                                    <input type="file" multiple="multiple" name="files" id="files" />
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-footer">
+                                                        <div class="form-group">
+                                                            <div class="col-md-9 col-md-offset-3">
+                                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                                <button type="reset" class="btn btn-default">Clear</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                   
+                                   
                                     </div>
                                 </div>
                             </div>

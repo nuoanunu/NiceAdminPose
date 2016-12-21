@@ -264,6 +264,7 @@
     <Compile Include="Models\NiceposeUser.cs">
       <DependentUpon>NicePoseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SupportModel\MultiplePhotosUpload.cs" />
     <Compile Include="Models\TemplatePicture.cs">
       <DependentUpon>NicePoseModel.tt</DependentUpon>
     </Compile>
