@@ -18,11 +18,18 @@ using System.Xml.Serialization;
 using NicePose.Models;
 using System.Xml;
 using System.Xml.Linq;
+using System.Web.Script.Serialization;
 using System.Linq;
 namespace NicePose.Controllers
 {
+    public class mPhotos {
+       public String photoURL { get; set; }
+        public String photoName { get; set; }
+        public int usage { get; set; }
+    }
     public class PhotosController : iController
     {
+
         String IMGUR_ANONYMOUS_API_KEY = "f615f2976080959";
         private object file;
 
@@ -34,6 +41,62 @@ namespace NicePose.Controllers
         {
             PostToImgur(@"C:\Users\NhatVHN\Desktop\New folder - Copy\hahaha.jpg", IMGUR_ANONYMOUS_API_KEY);
             return View();
+        }
+        public String getImagesOfCate(int cateID) {
+            Category cate = dbContext.Categories.Find(cateID);
+            List<mPhotos> lst = new List<mPhotos>();
+            foreach (TemplatePicture pic in cate.TemplatePictures) {
+                mPhotos mphoto = new mPhotos();
+                mphoto.photoName = pic.name;
+                mphoto.photoURL = pic.link;
+                mphoto.usage = pic.usage;
+                lst.Add(mphoto);
+            }
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            return serializer.Serialize(lst);
+
+        }
+        public ActionResult imageCate() {
+            ViewData["catelist"] = dbContext.Categories.ToList();
+            return View("AllCate");
+        }
+        public ActionResult CateDetail(int id)
+        {
+            ViewData["CateDetail"] = dbContext.Categories.Find(id);
+            return View("CateDetail");
+        }
+
+        public ActionResult UploadTemplate(int cateID, HttpPostedFileBase newpic, String name) {
+           
+                System.Diagnostics.Debug.WriteLine("I was called ?? ");
+                string contentType = "image/jpeg"; ;
+                CookieContainer cookie = new CookieContainer();
+                NameValueCollection par = new NameValueCollection();
+                par["MAX_FILE_SIZE"] = "3145728";
+                par["refer"] = "";
+                par["brand"] = "";
+                par["key"] = "01567DQW77d6d472ef877a4bf1d5b3ff8caebaa1";
+                par["optimage"] = "1";
+                par["rembar"] = "1";
+                par["submit"] = "host it!";
+                List<String> l = new List<String>();
+                string resp;
+                par["optsize"] = "resample";
+                resp = mUploadPicture(newpic, "http://www.imageshack.us/upload_api.php", "fileupload", contentType, par, cookie);
+                if (resp != null) {
+                    TemplatePicture pic = new TemplatePicture();
+                    pic.link = resp;
+                    pic.name = name;
+                    pic.usage = 0;
+                    pic.createdDate = DateTime.Now;
+                    pic.cateID = cateID;
+                    dbContext.TemplatePictures.Add(pic);
+                    dbContext.SaveChanges();
+                }
+
+            
+          
+            return RedirectToAction("CateDetail", new { id = cateID });
         }
         public static void PostToImgur(string imagFilePath, string apiKey)
         {
@@ -255,6 +318,97 @@ namespace NicePose.Controllers
 
 
         }
+        private string mUploadPicture(HttpPostedFileBase file , string url, string fileFormName, string contenttype, NameValueCollection querystring, CookieContainer cookies)
+        {
+            if ((fileFormName == null) ||
+              (fileFormName.Length == 0))
+            {
+                fileFormName = "fileupload";
+            }
+
+            if ((contenttype == null) ||
+              (contenttype.Length == 0))
+            {
+                contenttype = "application/octet-stream";
+            }
+
+
+            string postdata;
+            postdata = "?";
+            if (querystring != null)
+            {
+                foreach (string key in querystring.Keys)
+                {
+                    postdata += key + "=" + querystring.Get(key) + "&";
+                }
+            }
+            Uri uri = new Uri(url + postdata);
+
+
+            string boundary = "----------" + DateTime.Now.Ticks.ToString("x");
+            HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(uri);
+            webrequest.CookieContainer = cookies;
+            webrequest.ContentType = "multipart/form-data; boundary=" + boundary;
+            webrequest.Method = "POST";
+
+
+            // Build up the post message header
+            StringBuilder sb = new StringBuilder();
+            sb.Append("--");
+            sb.Append(boundary);
+            sb.Append("\r\n");
+            sb.Append("Content-Disposition: form-data; name=\"");
+            sb.Append(fileFormName);
+            sb.Append("\"; filename=\"");
+            sb.Append(Path.GetFileName(file.FileName));
+            sb.Append("\"");
+            sb.Append("\r\n");
+            sb.Append("Content-Type: ");
+            sb.Append(contenttype);
+            sb.Append("\r\n");
+            sb.Append("\r\n");
+            
+            string postHeader = sb.ToString();
+            byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postHeader);
+
+            // Build the trailing boundary string as a byte array
+            // ensuring the boundary appears on a line by itself
+            byte[] boundaryBytes =
+                Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+           
+      
+            long length = postHeaderBytes.Length + file.InputStream.Length +
+                                boundaryBytes.Length;
+            webrequest.ContentLength = length;
+
+            Stream requestStream = webrequest.GetRequestStream();
+            // Write out our post header
+            requestStream.Write(postHeaderBytes, 0, postHeaderBytes.Length);
+
+            // Write out the file contents
+            byte[] buffer = new Byte[checked((uint)Math.Min(4096,
+                         (int)file.InputStream.Length))];
+            int bytesRead = 0;
+            while ((bytesRead = file.InputStream.Read(buffer, 0, buffer.Length)) != 0)
+                requestStream.Write(buffer, 0, bytesRead);
+
+            // Write out the trailing boundary
+            requestStream.Write(boundaryBytes, 0, boundaryBytes.Length);
+            WebResponse responce = webrequest.GetResponse();
+            Stream s = responce.GetResponseStream();
+            XmlDocument doc = new XmlDocument();
+            doc.Load(s);
+            XmlNodeList imgLink = doc.GetElementsByTagName("image_link");
+            System.Diagnostics.Debug.WriteLine("cAi doc la ne " + doc.ToString());
+
+            file.InputStream.Close();
+            s.Close();
+
+            return imgLink[0].InnerText;
+
+
+        }
+
         [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.42")]
         [System.SerializableAttribute()]
         [System.Diagnostics.DebuggerStepThroughAttribute()]

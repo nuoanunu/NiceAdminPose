@@ -884,11 +884,12 @@
     <Content Include="Service References\Application Insights\ConnectedService.json" />
     <Content Include="Views\User\ProfileDetail.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\Photos\AllCate.cshtml" />
+    <Content Include="Views\Photos\CateDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\i\" />
-    <Folder Include="Views\Photos\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
